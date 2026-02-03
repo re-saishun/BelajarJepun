@@ -8,10 +8,10 @@ genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 # Daftar Model Gratis (Urutkan dari yang paling pintar ke yang paling cepat)
 FREE_MODELS = [
-    'gemini-1.5-flash',  # Sangat cepat, limit gratis lumayan besar
-    'gemini-1.5-pro',    # Paling pintar, tapi limit gratis lebih ketat
-    'gemini-1.0-pro',    # Model standar lama
-    'gemini-pro'         # Model fallback terakhir
+    'gemini-2.5-flash-lite', # Prioritas: 10 RPM (Paling Longgar)
+    'gemini-2.5-flash',      # Cadangan: 5 RPM
+    'gemini-3-flash',        # Cadangan: 5 RPM (Model terbaru generasi 3)
+    'gemini-1.5-flash'       # Fallback terakhir (Model stabil lama)
 ]
 
 def translate_with_fallback(text_list):

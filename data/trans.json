@@ -1,1 +1,6 @@
-{}
+{
+  "ohayou": "<ruby>おはよう<rt>おはよう</rt></ruby> | Selamat pagi",
+  "konnichiwa": "<ruby>こんにちは<rt>こんにちは</rt></ruby> | Selamat siang",
+  "oyasumi": "<ruby>おやすみ<rt>おやすみ</rt></ruby> | Selamat malam (tidur)",
+  "konbanwa": "<ruby>こんばんは<rt>こんばんは</rt></ruby> | Selamat malam"
+}

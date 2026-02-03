@@ -2,14 +2,10 @@
   "materi": [
     {
       "id": 1,
-      "judul": "Perkenalan Diri (Jikoshoukai)",
+      "judul": "Salam sapaan (Aisatsu)",
       "tanggal": "2024-05-20",
-      "isi": "Ketika kita ingin menyapa seseorang ada berbagai kalimat yang bisa kita pakai.<br>Kalau pagi, contohnya kita dapat menggunakan {JPN}ohayou{JPN} Lalu memperkenalkan nama, <br>Gunakan pola berikut: <br><b>Nama saya adalah {JPN}Watashi wa Budi desu{JPN}.</b>",
-      "kotoba": [
-        "ohayou",
-        "watashi",
-        "desu"
-      ]
+      "isi": "Ketika kita ingin menyapa seseorang, ada berbagai kalimat ataupun kosakata yang bisa kita pakai.<br> Saat pagi hari, kita dapat menggunakan {JPN}ohayou{JPN}<br> Jika siang hari, kita bisa menggunakan {JPN}konnichiwa{JPN}<br> Dan jika malam hari, kita bisa menggunakan {JPN}konbanwa{JPN}<br><br><b>Untuk memahami patokan waktu dalam menggunakan sapaan ini</b>,<br> {JPN}ohayou{JPN} biasanya di digunakan antara <b>sebelum pukul 10-11 siang</b>. <br>Untuk {JPN}konnichiwa{JPN} digunakan antara <b>pukul 11 siang-5 sore</b>. <br> Untuk {JPN}konbanwa{JPN} biasanya digunakan ketika <b>malam, atau langit telah gelap</b><br><br><br> Ada pula sapaan lain yang bisa digunakan selain tiga sapaan dasar tersebut, contohnya {JPN}oyasumi{JPN} yang bisa digunakan untuk mengucapkan selamat malam/selamat tidur.",
+      "kotoba": ["ohayou", "konnichiwa", "konbanwa", "oyasumi"]
     }
   ]
 }

@@ -1,81 +1,139 @@
-/* Sembunyikan halaman */
+/* --- 1. CORE & UTILITY --- */
 .hidden { display: none; }
 
-/* Styling Accordion Header (Summary) */
+/* Font khusus Jepang agar render Kanji & Furigana lebih cantik */
+body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+}
+
+/* --- 2. ACCORDION (DETAILS) --- */
 details summary {
     background-color: #f0f4f8;
     padding: 1rem;
     border-radius: 8px;
-    transition: background-color 0.3s ease;
-    list-style: none; /* Hilangkan panah default */
+    transition: all 0.3s ease;
+    list-style: none;
+    font-weight: 600;
 }
 
+details summary::-webkit-details-marker { display: none; } /* Hapus panah Safari */
+
 details summary:hover {
-    background-color: #d9e2ec; /* Menggelap saat hover */
+    background-color: #d9e2ec;
     cursor: pointer;
 }
 
-/* Kotak isi materi */
 details[open] summary {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     background-color: #d9e2ec;
+    margin-bottom: 0;
 }
 
+/* --- 3. KONTEN MATERI --- */
 .materi-body {
     background-color: #ffffff;
     padding: 1.5rem;
     border: 1px solid #d9e2ec;
     border-top: none;
     font-size: 1.1rem;
+    line-height: 1.8;
+    color: #102a43;
 }
 
-/* Footer Materi: Kotoba & Tanggal Sejajar */
+/* --- 4. FOOTER & KOTOBA CHIPS --- */
 .materi-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1rem;
-    font-size: 0.85rem; /* Lebih kecil dari isi */
-    color: #627d98;
+    flex-direction: column; /* Default mobile-first */
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border: 1px solid #d9e2ec;
+    border-top: none;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 .kotoba-section {
-    background: #e8f4fd;
-    padding: 4px 10px;
-    border-radius: 4px;
-    border-left: 3px solid #10ad8d;
+    flex: 1;
 }
 
-.jp-text {
-    color: #e74c3c;
-    font-weight: bold;
-    border-bottom: 1px dashed #e74c3c;
+.kotoba-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0 0;
 }
-/* Gaya untuk kata Jepang yang bisa diinteraksi */
+
+.chip {
+    background-color: #e3f2fd;
+    border: 1px solid #2196f3;
+    color: #0d47a1;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: help;
+    transition: all 0.2s ease;
+}
+
+.chip:hover {
+    background-color: #bbdefb;
+    transform: translateY(-2px);
+}
+
+.tanggal-footer {
+    font-size: 0.8rem;
+    color: #627d98;
+    text-align: right;
+}
+
+/* --- 5. JAPANSESE TEXT & RUBY --- */
 .jp-word {
-    border-bottom: 2px dashed #3a4b5c; /* Garis bawah putus-putus */
+    border-bottom: 2px dashed #1a5cff;
     cursor: help;
     color: #1a5cff;
     font-weight: bold;
-    display: inline-block;
     padding: 0 2px;
-    transition: background-color 0.3s;
 }
 
-.jp-word:hover {
-    background-color: #e0f0ff;
-    border-bottom-style: solid;
-}
-
-/* Memperbesar ukuran Furigana agar tidak terlalu kecil */
 ruby rt {
-    font-size: 0.6em;
-    color: #666;
+    font-size: 0.55em;
+    color: #486581;
 }
 
-/* Gaya jika AI gagal menerjemahkan */
-.jp-word-missing {
-    color: #f44336;
-    font-style: italic;
+/* --- 6. MEDIA QUERIES (RESPONSIVE) --- */
+
+/* Tablet & Desktop */
+@media (min-width: 768px) {
+    .materi-footer {
+        flex-direction: row; /* Berjejer ke samping di layar lebar */
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .materi-body {
+        font-size: 1.2rem;
+    }
+}
+
+/* Penyesuaian Tooltip untuk HP agar tidak terpotong */
+@media (max-width: 480px) {
+    [data-tooltip]::before {
+        width: 150px; 
+        white-space: normal; /* Bungkus teks jika tooltip panjang */
+        font-size: 0.8rem;
+    }
+    
+    .materi-body {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .chip {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+    }
 }

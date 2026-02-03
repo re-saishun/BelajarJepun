@@ -80,23 +80,31 @@ async function initApp() {
                         </div>
                         
                         <div class="materi-footer">
-                            <div class="kotoba-section">
-                                <strong>Kosakata Penting:</strong>
-                                <ul class="kotoba-chips">
-                                    ${item.kotoba && item.kotoba.length > 0 ? 
-                                        item.kotoba.map(k => {
-                                            const cleanK = k.trim();
-                                            const rawData = trans[cleanK];
-                                            if (rawData && rawData.includes('|')) {
-                                                const [jp, arti] = rawData.split('|').map(s => s.trim());
-                                                return `<li class="chip" data-tooltip="${arti}">${jp}</li>`;
-                                            }
-                                            return `<li class="chip">${cleanK}</li>`;
-                                        }).join('') 
-                                        : '<li>-</li>'
-                                    }
-                                </ul>
-                            </div>
+                            // ... di dalam data.materi.map((item) => { ...
+
+<div class="kotoba-section">
+    <strong>Kosakata Penting (Tap untuk lihat Jepang):</strong>
+    <ul class="kotoba-chips">
+        ${item.kotoba && item.kotoba.length > 0 ? 
+            item.kotoba.map(k => {
+                const cleanK = k.trim();
+                const rawData = trans[cleanK];
+                
+                if (rawData && rawData.includes('|')) {
+                    // split: [0] adalah Jepang, [1] adalah Indonesia
+                    const [jp, arti] = rawData.split('|').map(s => s.trim());
+                    
+                    // DIBALIK: yang tampil di chip adalah 'arti', yang di tooltip adalah 'jp'
+                    return `<li class="chip" data-tooltip="${jp}">${arti}</li>`;
+                }
+                
+                // Jika data belum ada di trans.json
+                return `<li class="chip" data-tooltip="Belum diterjemahkan AI">${cleanK}</li>`;
+            }).join('') 
+            : '<li>-</li>'
+        }
+    </ul>
+</div>
                             <div class="tanggal-footer">📅 ${item.tanggal}</div>
                         </div>
                     </details>

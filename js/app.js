@@ -25,8 +25,20 @@ function processJapaneseTags(text, trans) {
     const regex = /\{JPN\}(.*?)\{JPN\}/g;
     
     return text.replace(regex, (match, word) => {
-        // Ambil dari trans.json jika ada, jika tidak pakai kata aslinya
-        return `<span class="jp-text">${trans[word] || word}</span>`;
+        // 1. Bersihkan spasi di awal/akhir kata (Trim)
+        const cleanWord = word.trim();
+        
+        // 2. Cari di trans (coba case sensitive dulu)
+        let translated = trans[cleanWord];
+
+        // 3. Jika tidak ketemu, coba cari tanpa peduli huruf besar/kecil
+        if (!translated) {
+            const keyFound = Object.keys(trans).find(k => k.toLowerCase() === cleanWord.toLowerCase());
+            if (keyFound) translated = trans[keyFound];
+        }
+
+        // Jika ketemu, bungkus dengan span jp-text, jika tidak kembali ke asal
+        return translated ? `<span class="jp-text">${translated}</span>` : word;
     });
 }
 

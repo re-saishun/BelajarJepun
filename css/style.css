@@ -1,33 +1,54 @@
-/* Sembunyikan halaman yang tidak aktif */
+/* Sembunyikan halaman */
 .hidden { display: none; }
 
-/* Styling khusus tag JPN */
-.jp-text {
-    background-color: #fff3cd;
-    color: #856404;
-    padding: 2px 5px;
-    border-radius: 4px;
-    font-weight: bold;
-    border-bottom: 2px solid #ffeeba;
+/* Styling Accordion Header (Summary) */
+details summary {
+    background-color: #f0f4f8;
+    padding: 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    list-style: none; /* Hilangkan panah default */
 }
 
-/* Accordion Style menggunakan tag details bawaan Pico */
-details[role="list"] summary::after {
-    margin-right: 0.5rem;
+details summary:hover {
+    background-color: #d9e2ec; /* Menggelap saat hover */
+    cursor: pointer;
+}
+
+/* Kotak isi materi */
+details[open] summary {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: #d9e2ec;
+}
+
+.materi-body {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border: 1px solid #d9e2ec;
+    border-top: none;
+    font-size: 1.1rem;
+}
+
+/* Footer Materi: Kotoba & Tanggal Sejajar */
+.materi-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    font-size: 0.85rem; /* Lebih kecil dari isi */
+    color: #627d98;
 }
 
 .kotoba-section {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f4f7f9;
-    border-left: 4px solid #10ad8d;
-    font-size: 0.9rem;
+    background: #e8f4fd;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border-left: 3px solid #10ad8d;
 }
 
-.tanggal-footer {
-    display: block;
-    margin-top: 15px;
-    font-size: 0.75rem;
-    opacity: 0.6;
-    text-align: right;
+.jp-text {
+    color: #e74c3c;
+    font-weight: bold;
+    border-bottom: 1px dashed #e74c3c;
 }

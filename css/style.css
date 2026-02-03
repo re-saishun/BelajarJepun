@@ -52,3 +52,30 @@ details[open] summary {
     font-weight: bold;
     border-bottom: 1px dashed #e74c3c;
 }
+/* Gaya untuk kata Jepang yang bisa diinteraksi */
+.jp-word {
+    border-bottom: 2px dashed #3a4b5c; /* Garis bawah putus-putus */
+    cursor: help;
+    color: #1a5cff;
+    font-weight: bold;
+    display: inline-block;
+    padding: 0 2px;
+    transition: background-color 0.3s;
+}
+
+.jp-word:hover {
+    background-color: #e0f0ff;
+    border-bottom-style: solid;
+}
+
+/* Memperbesar ukuran Furigana agar tidak terlalu kecil */
+ruby rt {
+    font-size: 0.6em;
+    color: #666;
+}
+
+/* Gaya jika AI gagal menerjemahkan */
+.jp-word-missing {
+    color: #f44336;
+    font-style: italic;
+}

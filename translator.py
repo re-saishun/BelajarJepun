@@ -6,15 +6,18 @@ import google.generativeai as genai
 # Konfigurasi API
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
-# Daftar Model Gratis (Urutkan dari yang paling pintar ke yang paling cepat)
+# Daftar Model Gratis 2026
 FREE_MODELS = [
-    'gemini-2.5-flash-lite', # Prioritas: 10 RPM (Paling Longgar)
-    'gemini-2.5-flash',      # Cadangan: 5 RPM
-    'gemini-3-flash',        # Cadangan: 5 RPM (Model terbaru generasi 3)
-    'gemini-1.5-flash'       # Fallback terakhir (Model stabil lama)
+    'gemini-2.5-flash-lite', 
+    'gemini-2.5-flash',      
+    'gemini-3-flash',        
+    'gemini-1.5-flash'       
 ]
 
 def translate_with_fallback(text_list):
+    if not text_list:
+        return "{}"
+
     prompt = f"""
     Translate these Japanese Romaji words. 
     Format: Romaji as KEY, and "HTML_RUBY | INDO_MEANING" as VALUE.
@@ -30,47 +33,69 @@ def translate_with_fallback(text_list):
             model = genai.GenerativeModel(model_name)
             response = model.generate_content(prompt)
             
-            # Bersihkan markdown jika ada
+            # Bersihkan markdown ```json jika ada
             clean_json = re.sub(r'```json|```', '', response.text).strip()
             
             # Validasi apakah benar-benar JSON
-            json.loads(clean_json)
+            parsed_json = json.loads(clean_json)
             print(f"✅ Berhasil menggunakan {model_name}")
-            return clean_json
+            return parsed_json # Mengembalikan objek dictionary
             
         except Exception as e:
-            print(f"⚠️ Model {model_name} gagal atau limit habis. Error: {e}")
-            continue # Lanjut ke model berikutnya dalam daftar
+            print(f"⚠️ Model {model_name} gagal/limit. Error: {e}")
+            continue 
             
-    raise Exception("🚨 Semua model gratisan gagal/limit habis. Coba lagi nanti.")
+    raise Exception("🚨 Semua model gagal. Coba lagi nanti.")
 
-# 1. Baca materi.json
+# 1. Baca data/materi.json
 if not os.path.exists('data/materi.json'):
-    print("materi.json tidak ditemukan")
+    print("❌ materi.json tidak ditemukan")
     exit()
 
 with open('data/materi.json', 'r', encoding='utf-8') as f:
-    data = json.load(f)
+    data_materi = json.load(f)
 
-# 2. Cari semua tag {JPN}
-found_words = []
-for item in data['materi']:
+# 2. Baca data/trans.json (Kamus Lama) jika ada
+kamus_existing = {}
+if os.path.exists('data/trans.json'):
+    with open('data/trans.json', 'r', encoding='utf-8') as f:
+        try:
+            kamus_existing = json.load(f)
+        except:
+            kamus_existing = {}
+
+# 3. Kumpulkan semua kata dari {JPN} dan list 'kotoba'
+words_found = []
+for item in data_materi['materi']:
+    # Ambil dari tag {JPN}
     matches = re.findall(r'\{JPN\}(.*?)\{JPN\}', item['isi'])
-    found_words.extend(matches)
-
-# 3. Jalankan Proses AI
-if found_words:
-    unique_words = list(set(found_words))
-    print(f"🔍 Menemukan {len(unique_words)} kata unik.")
+    words_found.extend([m.strip() for m in matches])
     
+    # Ambil dari daftar 'kotoba'
+    if 'kotoba' in item and isinstance(item['kotoba'], list):
+        words_found.extend([k.strip() for k in item['kotoba']])
+
+# 4. Filter: Cari kata yang BENAR-BENAR baru
+unique_words = list(set(words_found))
+words_to_translate = [w for w in unique_words if w not in kamus_existing and w != ""]
+
+# 5. Jalankan Proses AI jika ada kata baru
+if words_to_translate:
+    print(f"🔍 Menemukan {len(words_to_translate)} kata baru untuk diterjemahkan.")
     try:
-        final_result = translate_with_fallback(unique_words)
+        # Panggil AI
+        new_translations = translate_with_fallback(words_to_translate)
         
+        # Gabungkan kamus lama dengan hasil baru
+        kamus_existing.update(new_translations)
+        
+        # Simpan kembali ke trans.json
         with open('data/trans.json', 'w', encoding='utf-8') as f:
-            f.write(final_result)
-        print("🎉 trans.json berhasil diperbarui dengan data AI!")
+            json.dump(kamus_existing, f, ensure_ascii=False, indent=2)
+            
+        print("🎉 trans.json berhasil diperbarui dengan kata-kata baru!")
         
     except Exception as e:
-        print(e)
+        print(f"❌ Error saat proses AI: {e}")
 else:
-    print("ℹ️ Tidak ada tag {JPN} baru untuk diterjemahkan.")
+    print("😎 Semua kata sudah ada di kamus. Tidak ada yang perlu dikirim ke AI.")

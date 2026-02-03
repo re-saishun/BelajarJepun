@@ -1,22 +1,45 @@
-<nav>
-    <div class="nav-container">
-        <span class="logo">🇯🇵 BelajarJepun</span>
-        <button id="menu-toggle" class="hamburger">☰</button>
-    </div>
-    <ul id="nav-links" class="hidden">
-        <li><a href="#" onclick="showPage('materi')">Materi</a></li>
-        <li><a href="#" onclick="showPage('kosakata')">Kosakata</a></li>
-    </ul>
-</nav>
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BelajarJepun</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <nav class="container">
+        <ul>
+            <li><strong>🇯🇵 BelajarJepun</strong></li>
+        </ul>
+        <ul>
+            <li>
+                <details role="list" dir="rtl">
+                    <summary aria-haspopup="listbox" role="link" class="secondary">Menu</summary>
+                    <ul role="listbox">
+                        <li><a href="#" onclick="showPage('materi')">Materi</a></li>
+                        <li><a href="#" onclick="showPage('kosakata')">Kosakata</a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </nav>
 
-<main id="app">
-    <section id="page-materi">
-        <h2>Daftar Materi</h2>
-        <div id="materi-container"></div>
-    </section>
+    <main class="container">
+        <section id="page-materi">
+            <div id="materi-container"></div>
+        </section>
 
-    <section id="page-kosakata" class="hidden">
-        <h2>Koleksi Kotoba</h2>
-        <ul id="kotoba-list"></ul>
-    </section>
-</main>
+        <section id="page-kosakata" class="hidden">
+            <article>
+                <header>Koleksi Kotoba</header>
+                <ul id="kotoba-list"></ul>
+            </article>
+        </section>
+    </main>
+
+    <script src="js/pwa-setup.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

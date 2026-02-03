@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>BelajarJepun</title>
+    <meta name="description" content="Aplikasi belajar bahasa Jepang untuk JLPT N5 hingga N1. Pelajari grammar, vocabulary, dan kanji dengan mudah.">
+    <meta name="author" content="BelajarJepun" />
+    <meta name="theme-color" content="#e53935" />
+
+    
+    
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    
+    
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="BelajarJepun" />
+<script>
+  // Load dark mode dari localStorage
+  if (
+    localStorage.theme === "dark" ||
+    (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)
+  ) {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+</script>
+    <meta property="og:title" content="BelajarJepun">
+  <meta name="twitter:title" content="BelajarJepun">
+  <meta property="og:description" content="Aplikasi belajar bahasa Jepang untuk JLPT N5 hingga N1. Pelajari grammar, vocabulary, dan kanji dengan mudah.">
+  <meta name="twitter:description" content="Aplikasi belajar bahasa Jepang untuk JLPT N5 hingga N1. Pelajari grammar, vocabulary, dan kanji dengan mudah.">
+</head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>    
+  </body>
+</html>

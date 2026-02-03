@@ -1,7 +1,7 @@
-// 1. WAJIB ADA: Definisi variabel global
+// 1. Variabel global untuk menyimpan semua kosakata unik yang ditemukan
 let koleksiKotoba = new Set();
 
-// 2. Fungsi Navigasi
+// 2. Fungsi Navigasi Halaman
 function showPage(pageId) {
     const pageMateri = document.getElementById('page-materi');
     const pageKosakata = document.getElementById('page-kosakata');
@@ -19,54 +19,56 @@ function showPage(pageId) {
     if (menuDropdown) menuDropdown.removeAttribute('open');
 }
 
-// 3. Fungsi Deteksi Tag {JPN}
+// 3. Fungsi Deteksi Tag {JPN} & Tooltip Otomatis
 function processJapaneseTags(text, trans) {
     if (!text) return "";
     const regex = /\{JPN\}(.*?)\{JPN\}/g;
     
     return text.replace(regex, (match, word) => {
-        const rawData = trans[word.trim()] || trans[word]; 
+        const cleanWord = word.trim();
+        const rawData = trans[cleanWord]; 
         
         if (rawData && rawData.includes('|')) {
-            // Pisahkan antara Kanji/Kana dan Arti Indo
+            // Memisahkan "Kanji/Kana | Arti" dari trans.json
             const [jepang, arti] = rawData.split('|').map(s => s.trim());
-            
-            // Bungkus dalam span dengan atribut data-tooltip (fitur bawaan Pico.css)
+            // data-tooltip adalah fitur Pico.css untuk hover info
             return `<span class="jp-word" data-tooltip="${arti}">${jepang}</span>`;
         }
         
-        // Jika data tidak ditemukan, tampilkan teks asli
-        return `<span class="jp-word-missing">${word}</span>`;
+        return `<span class="jp-word-missing">${cleanWord}</span>`;
     });
 }
 
-// 4. Render Kosakata
+// 4. Render Halaman Kosakata (Kamus Global User)
 function renderKosakata() {
     const list = document.getElementById('kotoba-list');
     if (koleksiKotoba.size === 0) {
         list.innerHTML = "<li>Belum ada kosakata terkumpul.</li>";
         return;
     }
+    // Menampilkan daftar unik yang sudah dikumpulkan dari semua materi
     list.innerHTML = [...koleksiKotoba].map(k => `<li><code>${k}</code></li>`).join('');
 }
 
-// 5. Inisialisasi Aplikasi
+// 5. Inisialisasi Aplikasi UTAMA
 async function initApp() {
     const container = document.getElementById('materi-container');
     
     try {
-        // Mengambil data materi dan trans secara paralel
+        // Fetch data dengan anti-cache agar data terbaru selalu masuk
+        const cacheBuster = `?v=${new Date().getTime()}`;
         const [resMateri, resTrans] = await Promise.all([
-            fetch('./data/materi.json'),
-            fetch('./data/trans.json').catch(() => null)
+            fetch('./data/materi.json' + cacheBuster),
+            fetch('./data/trans.json' + cacheBuster).catch(() => null)
         ]);
 
         const data = await resMateri.json();
         const trans = resTrans && resTrans.ok ? await resTrans.json() : {};
 
         container.innerHTML = data.materi.map((item) => {
+            // Kumpulkan kosakata untuk halaman 'Kosakata'
             if (item.kotoba) {
-                item.kotoba.forEach(k => koleksiKotoba.add(k));
+                item.kotoba.forEach(k => koleksiKotoba.add(k.trim()));
             }
 
             return `
@@ -76,9 +78,24 @@ async function initApp() {
                         <div class="materi-body">
                             ${processJapaneseTags(item.isi, trans)}
                         </div>
+                        
                         <div class="materi-footer">
                             <div class="kotoba-section">
-                                <strong>Kotoba:</strong> <code>${item.kotoba ? item.kotoba.join(', ') : '-'}</code>
+                                <strong>Kosakata Penting:</strong>
+                                <ul class="kotoba-chips">
+                                    ${item.kotoba && item.kotoba.length > 0 ? 
+                                        item.kotoba.map(k => {
+                                            const cleanK = k.trim();
+                                            const rawData = trans[cleanK];
+                                            if (rawData && rawData.includes('|')) {
+                                                const [jp, arti] = rawData.split('|').map(s => s.trim());
+                                                return `<li class="chip" data-tooltip="${arti}">${jp}</li>`;
+                                            }
+                                            return `<li class="chip">${cleanK}</li>`;
+                                        }).join('') 
+                                        : '<li>-</li>'
+                                    }
+                                </ul>
                             </div>
                             <div class="tanggal-footer">📅 ${item.tanggal}</div>
                         </div>
@@ -95,4 +112,5 @@ async function initApp() {
     showPage('materi');
 }
 
+// Jalankan aplikasi
 initApp();

@@ -25,20 +25,18 @@ function processJapaneseTags(text, trans) {
     const regex = /\{JPN\}(.*?)\{JPN\}/g;
     
     return text.replace(regex, (match, word) => {
-        // 1. Bersihkan spasi di awal/akhir kata (Trim)
-        const cleanWord = word.trim();
+        const rawData = trans[word.trim()] || trans[word]; 
         
-        // 2. Cari di trans (coba case sensitive dulu)
-        let translated = trans[cleanWord];
-
-        // 3. Jika tidak ketemu, coba cari tanpa peduli huruf besar/kecil
-        if (!translated) {
-            const keyFound = Object.keys(trans).find(k => k.toLowerCase() === cleanWord.toLowerCase());
-            if (keyFound) translated = trans[keyFound];
+        if (rawData && rawData.includes('|')) {
+            // Pisahkan antara Kanji/Kana dan Arti Indo
+            const [jepang, arti] = rawData.split('|').map(s => s.trim());
+            
+            // Bungkus dalam span dengan atribut data-tooltip (fitur bawaan Pico.css)
+            return `<span class="jp-word" data-tooltip="${arti}">${jepang}</span>`;
         }
-
-        // Jika ketemu, bungkus dengan span jp-text, jika tidak kembali ke asal
-        return translated ? `<span class="jp-text">${translated}</span>` : word;
+        
+        // Jika data tidak ditemukan, tampilkan teks asli
+        return `<span class="jp-word-missing">${word}</span>`;
     });
 }
 

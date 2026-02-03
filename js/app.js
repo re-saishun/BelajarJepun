@@ -80,7 +80,6 @@ async function initApp() {
                         </div>
                         
                         <div class="materi-footer">
-                            // ... di dalam data.materi.map((item) => { ...
 
 <div class="kotoba-section">
     <strong>Kosakata Penting (Tap untuk lihat Jepang):</strong>

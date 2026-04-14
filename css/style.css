@@ -1,1 +1,21 @@
+.container {
+    display: grid;
+    grid-template-columns: 1.2fr 10px 0.8fr; /* Kiri lebih besar */
+    height: 100vh;
+}
 
+.resizer {
+    background: #ccc;
+    cursor: col-resize;
+}
+
+/* Efek Hover Furigana */
+.word-node {
+    position: relative;
+    cursor: pointer;
+}
+
+/* Layer 2: Munculkan Hiragana saat hover, sembunyikan aslinya */
+.word-node:hover .original { display: none; }
+.word-node:hover .furigana { display: inline; color: #6c5ce7; font-weight: bold; }
+.furigana { display: none; }

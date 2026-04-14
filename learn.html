@@ -1,1 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Learning Mode - Sakamichi</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="main-container" id="split-wrapper">
+        <div id="left-panel" class="panel">
+            <div id="blog-header" class="mb-4"></div>
+            <div id="content-display"></div>
+        </div>
 
+        <div id="resizer" class="resizer"></div>
+
+        <div id="right-panel" class="panel">
+            <div id="input-fields"></div>
+        </div>
+    </div>
+
+    <div class="fab-container">
+        <button id="btn-layer-toggle" class="fab secondary" onclick="cycleLayer()">
+            <span id="layer-label">Original</span>
+        </button>
+        <button id="btn-verify" class="fab primary" onclick="verifyAll()">
+            Check
+        </button>
+    </div>
+
+    <script src="js/ui-interact.js"></script>
+</body>
+</html>

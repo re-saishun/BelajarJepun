@@ -1,11 +1,10 @@
-// Konfigurasi API Key
-const API_KEY_PROCESSOR = "AI_KEY_UNTUK_LAYER_DAN_TRANSLASI";
-const API_KEY_VERIFIER = "AI_KEY_UNTUK_KOREKSI_USER";
+// Mengambil API Key dari session agar tidak hardcoded
+const API_KEY_PROCESSOR = sessionStorage.getItem('api_processor') || prompt("Masukkan API Key AI Pertama (Processor):");
+if (API_KEY_PROCESSOR) sessionStorage.setItem('api_processor', API_KEY_PROCESSOR);
 
-/**
- * AI PERTAMA: Mengolah blog mentah menjadi 4 layer (Original, Furigana, Romaji, Indo)
- * Digunakan saat pertama kali scraping.
- */
+const API_KEY_VERIFIER = sessionStorage.getItem('api_verifier') || prompt("Masukkan API Key AI Kedua (Verifier):");
+if (API_KEY_VERIFIER) sessionStorage.setItem('api_verifier', API_KEY_VERIFIER);
+
 async function processBlogLayers(lines) {
     const batchSize = 10; // Batch kecil agar hasil lebih akurat
     let results = [];

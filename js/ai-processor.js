@@ -1,28 +1,94 @@
-const GEMINI_API_KEY = "YOUR_API_KEY";
+// Konfigurasi API Key
+const API_KEY_PROCESSOR = "AI_KEY_UNTUK_LAYER_DAN_TRANSLASI";
+const API_KEY_VERIFIER = "AI_KEY_UNTUK_KOREKSI_USER";
 
-async function processLinesWithAI(lines) {
-    const batchSize = 12;
-    let processedData = [];
+/**
+ * AI PERTAMA: Mengolah blog mentah menjadi 4 layer (Original, Furigana, Romaji, Indo)
+ * Digunakan saat pertama kali scraping.
+ */
+async function processBlogLayers(lines) {
+    const batchSize = 10; // Batch kecil agar hasil lebih akurat
+    let results = [];
 
     for (let i = 0; i < lines.length; i += batchSize) {
         const batch = lines.slice(i, i + batchSize);
-        const prompt = `Task: Analyze Japanese blog lines.
-        Format: JSON Array of Objects
-        Object Structure: 
-        - original: raw text
-        - furigana: text with hiragana in brackets () after Kanji
-        - romaji: hepburn romaji
-        - translation: indonesian translation
-        Lines: \n${batch.join('\n')}`;
-
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-        });
         
-        const resJson = await response.json();
-        const cleanText = resJson.candidates[0].content.parts[0].text.replace(/```json|```/g, "");
-        processedData = processedData.concat(JSON.parse(cleanText));
+        const prompt = {
+            contents: [{
+                parts: [{
+                    text: `Task: Japanese-Indonesian Linguist. 
+                    Convert each line into a JSON object with 4 layers.
+                    
+                    Rules:
+                    1. "original": raw text.
+                    2. "furigana": text with hiragana in brackets () after Kanji.
+                    3. "romaji": hepburn style.
+                    4. "translation": natural Indonesian.
+                    
+                    Lines to process:
+                    ${batch.join('\n')}
+                    
+                    Return ONLY a JSON array of objects.`
+                }]
+            }]
+        };
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY_PROCESSOR}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(prompt)
+            });
+
+            const data = await response.json();
+            const responseText = data.candidates[0].content.parts[0].text;
+            const jsonClean = responseText.replace(/```json|```/g, "").trim();
+            results = results.concat(JSON.parse(jsonClean));
+        } catch (error) {
+            console.error("Error AI Layering:", error);
+        }
     }
-    return processedData;
+    return results;
+}
+
+/**
+ * AI KEDUA: Membandingkan terjemahan User dengan referensi AI awal.
+ * Dipicu saat menekan tombol "Check" (FAB Kanan).
+ */
+async function verifyUserTranslation(originalJp, aiReference, userTranslation) {
+    const prompt = {
+        contents: [{
+            parts: [{
+                text: `Task: Japanese Language Tutor.
+                Compare the USER translation with the AI reference translation based on the ORIGINAL text.
+                
+                Data:
+                - Original: ${originalJp}
+                - Reference: ${aiReference}
+                - User: ${userTranslation}
+                
+                Instruction:
+                1. Berikan skor (0-100) berdasarkan keakuratan makna dan nuansa.
+                2. Berikan ulasan singkat (max 2 kalimat) dalam Bahasa Indonesia tentang apa yang salah (misal: salah partikel, salah makna kata, atau nuansa kurang pas).
+                
+                Format Output: 
+                SKOR: [angka]
+                ULASAN: [teks]`
+            }]
+        }]
+    };
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY_VERIFIER}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(prompt)
+        });
+
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text;
+    } catch (error) {
+        console.error("Error AI Verifier:", error);
+        return "Gagal memverifikasi. Silakan coba lagi.";
+    }
 }

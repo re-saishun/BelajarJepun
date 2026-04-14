@@ -1,21 +1,67 @@
-.container {
+/* Container Utama */
+.main-container {
     display: grid;
-    grid-template-columns: 1.2fr 10px 0.8fr; /* Kiri lebih besar */
+    grid-template-columns: 1.5fr 10px 1fr;
     height: 100vh;
+    overflow: hidden;
 }
 
+/* Panel Scrollable */
+.panel {
+    overflow-y: auto;
+    padding: 2rem;
+    scroll-behavior: smooth;
+}
+
+/* Resizer Style */
 .resizer {
-    background: #ccc;
+    background: #f0f0f0;
     cursor: col-resize;
+    transition: 0.2s;
+    z-index: 10;
+}
+.resizer:hover, .resizer.active {
+    background: #6c5ce7;
 }
 
-/* Efek Hover Furigana */
-.word-node {
-    position: relative;
+/* Line Alignment */
+.line-unit, .input-unit {
+    min-height: 80px; /* Samakan tinggi agar sejajar kiri-kanan */
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+/* Furigana Style */
+.text-original {
+    font-size: 1.25rem;
+    transition: all 0.2s;
+}
+.is-furigana {
+    color: #6c5ce7;
+    font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+    background: #f3f0ff;
+    border-radius: 4px;
+    padding: 0 5px;
+}
+
+/* FAB Styling */
+.fab-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.fab {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-weight: bold;
     cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
-
-/* Layer 2: Munculkan Hiragana saat hover, sembunyikan aslinya */
-.word-node:hover .original { display: none; }
-.word-node:hover .furigana { display: inline; color: #6c5ce7; font-weight: bold; }
-.furigana { display: none; }
+.primary { background: #00b894; }
+.secondary { background: #6c5ce7; }

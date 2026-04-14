@@ -1,1 +1,39 @@
-
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Sakamichi Blog Learning - Scraper</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f4f7f6; padding: 50px; }
+        .card { border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card p-4">
+            <h2 class="text-center mb-4">Blog Scraper & Processor</h2>
+            <div class="mb-3">
+                <input type="text" id="urlInput" class="form-control" placeholder="Masukkan URL Blog (Saku/Nogi/Hinata)">
+            </div>
+            <button onclick="startProcessing()" class="btn btn-primary w-100">Proses & Simpan ke GitHub</button>
+            
+            <div id="statusArea" class="mt-4" style="display:none;">
+                <div class="progress mb-2">
+                    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div>
+                </div>
+                <p id="statusText" class="small text-muted text-center"></p>
+            </div>
+        </div>
+    </div>
+    <script src="js/github-api.js"></script>
+    <script src="js/ai-processor.js"></script>
+    <script>
+        async function startProcessing() {
+            const url = document.getElementById('urlInput').value;
+            if(!url) return alert("URL wajib diisi!");
+            // Logika alur proses akan memanggil scraper -> AI -> Github
+        }
+    </script>
+</body>
+</html>

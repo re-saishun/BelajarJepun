@@ -29,11 +29,92 @@
     <script src="js/github-api.js"></script>
     <script src="js/ai-processor.js"></script>
     <script>
-        async function startProcessing() {
-            const url = document.getElementById('urlInput').value;
-            if(!url) return alert("URL wajib diisi!");
-            // Logika alur proses akan memanggil scraper -> AI -> Github
+       async function startProcessing() {
+    const url = document.getElementById('urlInput').value;
+    const statusArea = document.getElementById('statusArea');
+    const statusText = document.getElementById('statusText');
+    const progressBar = document.getElementById('progressBar');
+
+    if (!url) return alert("URL wajib diisi!");
+
+    // Tampilkan indikator loading
+    statusArea.style.display = "block";
+    updateProgress(10, "Mengecek URL dan melakukan scraping...");
+
+    try {
+        // 1. TAHAP SCRAPING (Logika ini bisa ditaruh di file scraper.js jika sudah dipisah)
+        const blogData = await scrapeBlogManual(url); 
+        updateProgress(30, "Konten didapat. Menghubungi AI (Tahap 1)...");
+
+        // 2. TAHAP AI PROCESSING (Memanggil fungsi di ai-processor.js)
+        // Kita pecah isi blog menjadi baris-baris teks
+        const lines = blogData.rawContent.split(/<br\s*\/?>/gi).filter(l => l.trim() !== "");
+        const processedLayers = await processBlogLayers(lines); 
+        updateProgress(70, "AI selesai memproses. Mengunggah ke GitHub...");
+
+        // Satukan metadata dengan hasil AI
+        const finalData = {
+            metadata: {
+                title: blogData.title,
+                date: blogData.date,
+                author: blogData.author,
+                url: url,
+                id: Date.now().toString() // ID unik sederhana
+            },
+            layers: processedLayers
+        };
+
+        // 3. TAHAP GITHUB (Memanggil fungsi di github-api.js)
+        // Menentukan folder berdasarkan grup
+        let folder = "others";
+        if(url.includes("sakurazaka46")) folder = "sakurazaka";
+        else if(url.includes("nogizaka46")) folder = "nogizaka";
+        else if(url.includes("hinatazaka46")) folder = "hinatazaka";
+
+        const fileName = `${folder}/blog_${finalData.metadata.id}`;
+        const success = await saveToRepo(fileName, finalData);
+
+        if (success) {
+            updateProgress(100, "Selesai! Data berhasil disimpan di GitHub.");
+            alert("Berhasil! Kamu bisa melihat datanya di repo BelajarJepun.");
+        } else {
+            throw new Error("Gagal menyimpan ke GitHub. Cek token atau koneksi.");
         }
+
+    } catch (err) {
+        console.error(err);
+        statusText.innerText = "Error: " + err.message;
+        progressBar.classList.replace("bg-primary", "bg-danger");
+    }
+}
+
+// Fungsi pembantu untuk Update Progress Bar
+function updateProgress(val, text) {
+    const progressBar = document.getElementById('progressBar');
+    const statusText = document.getElementById('statusText');
+    progressBar.style.width = val + "%";
+    statusText.innerText = text;
+}
+
+// Fungsi Scraper Sederhana (Jika belum ada scraper.js)
+async function scrapeBlogManual(url) {
+    const proxy = "https://cors-proxy1.vercel.app/api/fetch?url=";
+    const res = await fetch(proxy + encodeURIComponent(url));
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+
+    // Contoh untuk Sakurazaka (Sesuaikan selector dengan inputmu sebelumnya)
+    if(url.includes("sakurazaka46")) {
+        return {
+            title: doc.querySelector(".title")?.innerText || "No Title",
+            author: doc.querySelector(".eigo")?.innerText || "Unknown",
+            date: "2026", // Bisa diimprove pengambilannya
+            rawContent: doc.querySelector(".box-article")?.innerHTML || ""
+        };
+    }
+    // Tambahkan kondisi else if untuk Nogi/Hinata di sini...
+    return { title: "N/A", rawContent: "" };
+}
     </script>
 </body>
 </html>

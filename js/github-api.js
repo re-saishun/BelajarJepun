@@ -1,5 +1,6 @@
-const GH_TOKEN = "YOUR_GITHUB_TOKEN";
-const GH_REPO = "username/repo-name";
+const GH_TOKEN = const GH_TOKEN = sessionStorage.getItem('gh_token') || prompt("Masukkan GitHub Token:");
+sessionStorage.setItem('gh_token', GH_TOKEN);
+const GH_REPO = "re-saishun/BelajarJepun";
 
 async function saveToRepo(path, contentObj) {
     const url = `https://api.github.com/repos/${GH_REPO}/contents/data/${path}.json`;
